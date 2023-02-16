@@ -1,4 +1,14 @@
 add_executable(point_index point_index.cc)
 target_link_libraries(point_index LINK_PUBLIC s2testing s2)
+
 add_executable(term_index term_index.cc)
 target_link_libraries(term_index LINK_PUBLIC s2testing s2)
+
+add_executable(s2shape_index_poc s2shape_index_poc.cc)
+target_link_libraries(s2shape_index_poc LINK_PUBLIC s2testing s2)
+
+add_executable(encode_s2shape_index encode_s2shape_index.cc)
+target_link_libraries(encode_s2shape_index LINK_PUBLIC s2testing s2)
+
+add_executable(load_s2shape_index_from_java load_s2shape_index_from_java.cc)
+target_link_libraries(load_s2shape_index_from_java LINK_PUBLIC s2testing s2)
