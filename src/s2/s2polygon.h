@@ -786,6 +786,46 @@ class S2Polygon final : public S2Region {
 
     std::unique_ptr<const S2Polygon> owned_polygon_;
   };
+
+  class CanadaCensusPolygon : public S2Polygon::OwningShape {
+  public:
+    static constexpr TypeTag kTypeTag = 6;
+
+    // Used when creating the polygon.
+    void Init(uint64 ubimo_id, std::unique_ptr<const S2Polygon> polygon) {
+      ubimo_id_ = ubimo_id;
+      OwningShape::Init(std::move(polygon));
+    }
+    
+    // Used when decoding the polygon.
+    bool Init(Decoder* decoder) {
+      std::cout << "decoding CanadaCensusPolygon" << std::endl << std::endl;
+      ubimo_id_ = decoder->get64();
+      return OwningShape::Init(decoder);
+    }
+
+    void Encode(Encoder* encoder, s2coding::CodingHint hint) const override {
+      std::cout << "encoding CanadaCensusPolygon" << std::endl << std::endl;
+      encoder->Ensure(20);
+      encoder->put64(ubimo_id_);
+      OwningShape::Encode(encoder, hint);
+    }
+
+    TypeTag type_tag() const override {
+      return kTypeTag;
+    }
+    
+    virtual const void* user_data() const override {
+      return &ubimo_id_;
+    }
+
+    virtual void* mutable_user_data() override {
+      return &ubimo_id_;
+    }
+
+  private:
+    uint64 ubimo_id_ = 0;
+  };
 #endif  // SWIG
 
   // Returns the built-in S2ShapeIndex associated with every S2Polygon.  This

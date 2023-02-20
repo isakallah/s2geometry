@@ -139,7 +139,7 @@ class S2Shape {
   static constexpr TypeTag kNoTypeTag = 0;
 
   // The following constant should be updated whenever new types are added.
-  static constexpr TypeTag kNextAvailableTypeTag = 6;
+  static constexpr TypeTag kNextAvailableTypeTag = 7;
 
   // The minimum allowable tag for user-defined S2Shape types.
   static constexpr TypeTag kMinUserTypeTag = 8192;

@@ -71,6 +71,12 @@ bool CompactEncodeShape(const S2Shape& shape, Encoder* encoder) {
 // function returns, the underlying Decoder data is no longer needed.
 unique_ptr<S2Shape> FullDecodeShape(S2Shape::TypeTag tag, Decoder* decoder) {
   switch (tag) {
+    case S2Polygon::CanadaCensusPolygon::kTypeTag: {
+      auto shape = make_unique<S2Polygon::CanadaCensusPolygon>();
+      if (!shape->Init(decoder)) return nullptr;
+      // Some platforms (e.g. NaCl) require the following conversion.
+      return std::move(shape);  // Converts to S2Shape.
+    }
     case S2Polygon::Shape::kTypeTag: {
       auto shape = make_unique<S2Polygon::OwningShape>();
       if (!shape->Init(decoder)) return nullptr;
