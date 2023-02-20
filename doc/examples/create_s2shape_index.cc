@@ -32,7 +32,7 @@ std::unique_ptr<MutableS2ShapeIndex> CreateMutableIndex(
 
 void QueryMutableS2ShapeIndex(
     MutableS2ShapeIndex* mutable_index,
-    S2LatLng lat_lng,
+    const S2LatLng& lat_lng,
     const std::string& index_name) {
 
   auto query = MakeS2ContainsPointQuery(mutable_index);

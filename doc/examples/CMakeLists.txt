@@ -10,5 +10,8 @@ target_link_libraries(s2shape_index_poc LINK_PUBLIC s2testing s2)
 add_executable(create_s2shape_index create_s2shape_index.cc)
 target_link_libraries(create_s2shape_index LINK_PUBLIC s2testing s2)
 
+add_executable(load_s2cell_index load_s2cell_index.cc)
+target_link_libraries(load_s2cell_index LINK_PUBLIC s2testing s2)
+
 add_executable(load_s2shape_index_from_java load_s2shape_index_from_java.cc)
 target_link_libraries(load_s2shape_index_from_java LINK_PUBLIC s2testing s2)
