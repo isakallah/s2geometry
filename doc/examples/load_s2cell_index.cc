@@ -10,6 +10,9 @@
 #include "s2/s2cell_id.h"
 #include "s2/s2cell_union.h"
 
+static const S2LatLng kToronto = S2LatLng::FromDegrees(43.687431, -79.394071);
+static const S2LatLng kAcroTelAviv = S2LatLng::FromDegrees(32.065246, 34.785711);
+
 using LabelString = std::string;
 using S2CellIdLabelPair = std::pair<S2CellId, LabelString>;
 
@@ -65,7 +68,8 @@ Index CreateS2CellIndex(
 void QueryS2CellIndex(
     const Index& index,
     const S2LatLng& lat_lng,
-    const std::string& index_name) {
+    const std::string& index_name,
+    const std::string& lat_lng_name) {
 
   // Notice that S2ClosestPointQuery can also be used
   S2CellUnion target({S2CellId(lat_lng)});
@@ -73,9 +77,10 @@ void QueryS2CellIndex(
   
   auto num_intersecting_labels = intersecting_labels.size();
 
-  std::cout << "Does " << index_name << " contain lat,lng(" << lat_lng.ToStringInDegrees() << ") ? ";
+  std::cout << "Does " << index_name << " contain lat,lng(" << lat_lng.ToStringInDegrees()
+            << ") (" << lat_lng_name << ") ? ";
   if (num_intersecting_labels == 0) {
-    std::cout << "NO you stupid BITCH! hahaha... BYE!" << std::endl << std::endl;
+    std::cout << "NO you stupid BITCH! hahaha... BYE!" << std::endl;
     return;
   }
 
@@ -86,18 +91,21 @@ void QueryS2CellIndex(
     std::cout << delim << index.labels_lexicon->value(label);
     delim = ",";
   }
-  std::cout << std::endl << std::endl;
+  std::cout << std::endl;
 }
 
 void ParseIndexAndQuery(const std::string& file_path) {
   auto s2cell_label_pairs = GetS2CellLabelPairs(file_path);
   auto index = CreateS2CellIndex(s2cell_label_pairs);
-  QueryS2CellIndex(index, S2LatLng::FromDegrees(43.687431, -79.394071), file_path);
-  QueryS2CellIndex(index, S2LatLng::FromDegrees(32.065246, 34.785711), file_path);
+  QueryS2CellIndex(index, kToronto, file_path, "kToronto");
+  QueryS2CellIndex(index, kAcroTelAviv, file_path, "kAcroTelAviv");
+  std::cout << std::endl;
 }
 
 int main(int argc, char **argv) {
-  ParseIndexAndQuery("/home/root/data/s2cellindex/s2cell_label_pairs_1676894426715.csv");
+  ParseIndexAndQuery("/home/root/data/s2cellindex/1676894426715_s2cells.csv");
   ParseIndexAndQuery("/home/root/data/s2cellindex/1676909243333_s2cells.csv");
+  ParseIndexAndQuery("/home/root/data/s2cellindex/1677012853219_s2cells.csv");
+  // ParseIndexAndQuery("/home/root/data/s2cellindex/parent_cell_test.csv");
   return 0;
 }
