@@ -1,25 +1,4 @@
-#include <memory>
-#include <vector>
-#include <utility>
-#include <string>
-#include <fstream>
-
-#include "s2/value_lexicon.h"
-#include "s2/s2cell_index.h"
-#include "s2/s2latlng.h"
-#include "s2/s2cell_id.h"
-#include "s2/s2cell_union.h"
-
-static const S2LatLng kToronto = S2LatLng::FromDegrees(43.687431, -79.394071);
-static const S2LatLng kAcroTelAviv = S2LatLng::FromDegrees(32.065246, 34.785711);
-
-using LabelString = std::string;
-using S2CellIdLabelPair = std::pair<S2CellId, LabelString>;
-
-struct Index {
-  std::unique_ptr<S2CellIndex> s2cell_index;
-  std::unique_ptr<ValueLexicon<LabelString>> labels_lexicon;
-};
+#include "s2cell_index_utils.h"
 
 std::vector<S2CellIdLabelPair> GetS2CellLabelPairs(const std::string& file_path) {
   std::vector<S2CellIdLabelPair> s2cell_label_pairs;
@@ -30,11 +9,11 @@ std::vector<S2CellIdLabelPair> GetS2CellLabelPairs(const std::string& file_path)
   while(std::getline(file_stream, line)) {
     std::istringstream line_stream(line);
     std::string s2cell_id_str;
-    std::getline(line_stream, s2cell_id_str,',');
+    std::getline(line_stream, s2cell_id_str, ',');
     auto s2cell_id = S2CellId(std::stoull(s2cell_id_str));
 
     std::string label_str;
-    std::getline(line_stream, label_str,',');
+    std::getline(line_stream, label_str, ',');
 
     s2cell_label_pairs.push_back(S2CellIdLabelPair(s2cell_id, label_str));
   }
@@ -43,8 +22,6 @@ std::vector<S2CellIdLabelPair> GetS2CellLabelPairs(const std::string& file_path)
 
 Index CreateS2CellIndex(
     const std::vector<S2CellIdLabelPair>& s2cell_label_pairs) {
-
-  std::cout << "CreateS2CellIndex" << std::endl;
 
   // notice that ValueLexicon::Add is fucking stupid and returns uint32,
   // when S2CellIndex::Label is a fucking int32.
@@ -60,10 +37,40 @@ Index CreateS2CellIndex(
   }
 
   index.s2cell_index->Build();
-
-  std::cout << "Finished creating S2CellIndex, s2cell_index->num_cells(): " << index.s2cell_index->num_cells() << std::endl << std::endl;
   return std::move(index);
 }
+
+// *****************************************************************************
+
+std::vector<LatLngLabelPair> GetLatLngLabelPairs(const std::string& file_path) {
+  std::vector<LatLngLabelPair> lat_lng_label_pairs;
+
+  std::ifstream file_stream(file_path);
+  std::string line;
+  // std::getline(file_stream, line); // skip header
+  while(std::getline(file_stream, line)) {
+    std::istringstream line_stream(line);
+
+    std::string lat_str;
+    std::getline(line_stream, lat_str, ',');
+    double lat = std::stod(lat_str);
+
+    std::string lng_str;
+    std::getline(line_stream, lng_str, ',');
+    double lng = std::stod(lng_str);
+
+    auto lat_lng = S2LatLng::FromDegrees(lat, lng);
+
+    // the rest of the string is the label
+    std::string label_str;
+    std::getline(line_stream, label_str);
+
+    lat_lng_label_pairs.push_back(LatLngLabelPair(lat_lng, label_str));
+  }
+  return lat_lng_label_pairs;
+}
+
+// *****************************************************************************
 
 void QueryS2CellIndex(
     const Index& index,
@@ -94,18 +101,10 @@ void QueryS2CellIndex(
   std::cout << std::endl;
 }
 
-void ParseIndexAndQuery(const std::string& file_path) {
+Index LoadS2CellIndex(const std::string& file_path) {
+  std::cout << "LoadS2CellIndex: file_path: " << file_path << std::endl;
   auto s2cell_label_pairs = GetS2CellLabelPairs(file_path);
   auto index = CreateS2CellIndex(s2cell_label_pairs);
-  QueryS2CellIndex(index, kToronto, file_path, "kToronto");
-  QueryS2CellIndex(index, kAcroTelAviv, file_path, "kAcroTelAviv");
-  std::cout << std::endl;
-}
-
-int main(int argc, char **argv) {
-  ParseIndexAndQuery("/home/root/data/s2cellindex/1676894426715_s2cells.csv");
-  ParseIndexAndQuery("/home/root/data/s2cellindex/1676909243333_s2cells.csv");
-  ParseIndexAndQuery("/home/root/data/s2cellindex/1677012853219_s2cells.csv");
-  // ParseIndexAndQuery("/home/root/data/s2cellindex/parent_cell_test.csv");
-  return 0;
+  std::cout << "LoadS2CellIndex Finished: s2cell_index->num_cells(): " << index.s2cell_index->num_cells() << std::endl << std::endl;
+  return index;
 }
