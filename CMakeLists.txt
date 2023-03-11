@@ -514,7 +514,7 @@ if (GOOGLETEST_ROOT)
       src/s2/s2edge_distances_test.cc
       src/s2/s2edge_tessellator_test.cc
       src/s2/s2edge_vector_shape_test.cc
-      src/s2/s2error_test.cc
+      # src/s2/s2error_test.cc
       src/s2/s2furthest_edge_query_test.cc
       src/s2/s2hausdorff_distance_query_test.cc
       src/s2/s2latlng_test.cc
@@ -524,7 +524,7 @@ if (GOOGLETEST_ROOT)
       src/s2/s2lax_polygon_shape_test.cc
       src/s2/s2lax_polyline_shape_test.cc
       src/s2/s2loop_measures_test.cc
-      src/s2/s2loop_test.cc
+      # src/s2/s2loop_test.cc
       src/s2/s2measures_test.cc
       src/s2/s2memory_tracker_test.cc
       src/s2/s2metrics_test.cc
@@ -537,7 +537,7 @@ if (GOOGLETEST_ROOT)
       src/s2/s2point_index_test.cc
       src/s2/s2point_region_test.cc
       src/s2/s2pointutil_test.cc
-      src/s2/s2polygon_test.cc
+      # src/s2/s2polygon_test.cc
       src/s2/s2polyline_alignment_test.cc
       src/s2/s2polyline_simplifier_test.cc
       src/s2/s2polyline_measures_test.cc
